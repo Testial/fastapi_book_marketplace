@@ -41,4 +41,4 @@ class ReturnedAllbooks(BaseModel):
 
 class ReturnedBookForSeller(BaseBook):
     id: int
-    count_pages: int
+    pages: int

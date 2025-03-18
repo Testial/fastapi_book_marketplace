@@ -8,10 +8,7 @@ from src.models.sellers import Seller
 
 # Тест на ручку создающую книгу
 @pytest.mark.asyncio
-async def test_create_book(db_session, async_client):
-    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
-    db_session.add(seller)
-    await db_session.flush()
+async def test_create_book(db_session, async_client, seller):
     data = {
         "title": "Clean Architecture",
         "author": "Robert Martin",
@@ -38,10 +35,7 @@ async def test_create_book(db_session, async_client):
 
 
 @pytest.mark.asyncio
-async def test_create_book_with_old_year(db_session, async_client):
-    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
-    db_session.add(seller)
-    await db_session.flush()
+async def test_create_book_with_old_year(db_session, async_client, seller):
     data = {
         "title": "Clean Architecture",
         "author": "Robert Martin",
@@ -56,12 +50,7 @@ async def test_create_book_with_old_year(db_session, async_client):
 
 # Тест на ручку получения списка книг
 @pytest.mark.asyncio
-async def test_get_books(db_session, async_client):
-    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
-    db_session.add(seller)
-    await db_session.flush()
-    # Создаем книги вручную, а не через ручку, чтобы нам не попасться на ошибку которая
-    # может случиться в POST ручке
+async def test_get_books(db_session, async_client, seller):
     book = Book(author="Pushkin", title="Eugeny Onegin", year=2001, pages=104)
     book.seller_id = seller.id
     book_2 = Book(author="Lermontov", title="Mziri", year=1997, pages=104)
@@ -103,12 +92,7 @@ async def test_get_books(db_session, async_client):
 
 # Тест на ручку получения одной книги
 @pytest.mark.asyncio
-async def test_get_single_book(db_session, async_client):
-    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
-    db_session.add(seller)
-    await db_session.flush()
-    # Создаем книги вручную, а не через ручку, чтобы нам не попасться на ошибку которая
-    # может случиться в POST ручке
+async def test_get_single_book(db_session, async_client, seller):
     book = Book(author="Pushkin", title="Eugeny Onegin", year=2001, pages=104)
     book.seller_id = seller.id
     book_2 = Book(author="Lermontov", title="Mziri", year=1997, pages=104)
@@ -134,12 +118,7 @@ async def test_get_single_book(db_session, async_client):
 
 # Тест на ручку обновления книги
 @pytest.mark.asyncio
-async def test_update_book(db_session, async_client):
-    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
-    db_session.add(seller)
-    await db_session.flush()
-    # Создаем книги вручную, а не через ручку, чтобы нам не попасться на ошибку которая
-    # может случиться в POST ручке
+async def test_update_book(db_session, async_client, seller):
     book = Book(author="Pushkin", title="Eugeny Onegin", year=2001, pages=104)
     book.seller_id = seller.id
 
@@ -172,10 +151,7 @@ async def test_update_book(db_session, async_client):
 
 
 @pytest.mark.asyncio
-async def test_delete_book(db_session, async_client):
-    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
-    db_session.add(seller)
-    await db_session.flush()
+async def test_delete_book(db_session, async_client, seller):
     book = Book(author="Lermontov", title="Mtziri", pages=510, year=2024)
     book.seller_id = seller.id
 
@@ -195,10 +171,7 @@ async def test_delete_book(db_session, async_client):
 
 
 @pytest.mark.asyncio
-async def test_delete_book_with_invalid_book_id(db_session, async_client):
-    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
-    db_session.add(seller)
-    await db_session.flush()
+async def test_delete_book_with_invalid_book_id(db_session, async_client, seller):
     book = Book(author="Lermontov", title="Mtziri", pages=510, year=2024)
     book.seller_id = seller.id
 

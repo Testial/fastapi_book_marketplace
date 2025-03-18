@@ -1,6 +1,7 @@
 ﻿from typing import Annotated, List
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.configurations.database import get_async_session
 from src.models.sellers import Seller
@@ -30,19 +31,17 @@ async def get_all_sellers(session: DBSession):
 
 @sellers_router.get("/{seller_id}", response_model=SellerOutWithBooks)
 async def get_seller(seller_id: int, session: DBSession):
-    seller = await session.get(Seller, seller_id)
+    query = (
+        select(Seller)
+        .options(selectinload(Seller.books))
+        .filter(Seller.id == seller_id)
+    )
+    result = await session.execute(query)
+    seller = result.scalars().first()
+
     if seller:
-        seller_books = [
-            {"id": book.id, "title": book.title, "author": book.author, "year": book.year, "count_pages": book.pages}
-            for book in seller.books
-        ]
-        return {
-            "id": seller.id,
-            "first_name": seller.first_name,
-            "last_name": seller.last_name,
-            "e_mail": seller.e_mail,
-            "books": seller_books
-        }
+        return seller
+
     return Response(status_code=status.HTTP_404_NOT_FOUND)
 
 @sellers_router.put("/{seller_id}", response_model=SellerOut)

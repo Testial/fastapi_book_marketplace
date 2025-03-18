@@ -14,6 +14,7 @@ from src.configurations.settings import settings
 from src.models import books  # noqa
 from src.models.base import BaseModel
 from src.models.books import Book  # noqa F401
+from src.models.sellers import Seller  # <-- add import if missing
 
 # Переопределяем движок для запуска тестов и подключаем его к тестовой базе.
 # Это решает проблему с сохранностью данных в основной базе приложения.
@@ -87,3 +88,11 @@ async def async_client(test_app):
         transport=transport, base_url="http://127.0.0.1:8000"
     ) as test_client:
         yield test_client
+
+
+@pytest_asyncio.fixture
+async def seller(db_session):
+    seller = Seller(first_name="Test", last_name="Seller", e_mail="test@seller.com", password="secret")
+    db_session.add(seller)
+    await db_session.flush()
+    return seller

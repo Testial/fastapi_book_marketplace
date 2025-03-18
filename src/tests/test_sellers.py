@@ -112,8 +112,8 @@ async def test_get_seller_with_books(db_session, async_client):
     assert response.status_code == status.HTTP_200_OK
 
     expected_books = [
-        {"id": book1.id, "title": book1.title, "author": book1.author, "year": book1.year, "count_pages": book1.pages},
-        {"id": book2.id, "title": book2.title, "author": book2.author, "year": book2.year, "count_pages": book2.pages},
+        {"id": book1.id, "title": book1.title, "author": book1.author, "year": book1.year, "pages": book1.pages},
+        {"id": book2.id, "title": book2.title, "author": book2.author, "year": book2.year, "pages": book2.pages},
     ]
     assert response.json() == {
         "id": seller.id,

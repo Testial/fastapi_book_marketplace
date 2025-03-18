@@ -10,7 +10,7 @@ from src.models.books import Book
 from src.schemas import IncomingBook, ReturnedAllbooks, ReturnedBook
 from icecream import ic
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.configurations import get_async_session
+from src.configurations.database import get_async_session
 
 books_router = APIRouter(tags=["books"], prefix="/books")
 
@@ -87,7 +87,6 @@ async def update_book(book_id: int, new_book_data: ReturnedBook, session: DBSess
         updated_book.title = new_book_data.title
         updated_book.year = new_book_data.year
         updated_book.pages = new_book_data.pages
-        updated_book.seller_id = new_book_data.seller_id
 
         await session.flush()
 
