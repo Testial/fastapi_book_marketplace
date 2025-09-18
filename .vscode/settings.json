@@ -1,4 +1,3 @@
 {
-  "python.analysis.extraPaths": ["${workspaceFolder}"],
-  "python.defaultInterpreterPath": "/home/maxim/Projects/shad/fastapi_project/.venv/bin/python"
+  "python.testing.pytestEnabled": true,
 }

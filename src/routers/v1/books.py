@@ -10,7 +10,7 @@ from src.models.books import Book
 from src.schemas import IncomingBook, ReturnedAllbooks, ReturnedBook
 from icecream import ic
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.configurations import get_async_session
+from src.configurations.database import get_async_session
 
 books_router = APIRouter(tags=["books"], prefix="/books")
 
@@ -37,6 +37,7 @@ async def create_book(
             "author": book.author,
             "year": book.year,
             "pages": book.pages,
+            "seller_id": book.seller_id,
         }
     )
 
