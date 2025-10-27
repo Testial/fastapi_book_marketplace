@@ -1,48 +1,122 @@
-## Изменения по урокам
+# FastAPI Book Marketplace
 
-**Урок 1**. Реализовали ручки приложения с фейковой базой и сериализаторами.
+## About
+This project is a FastAPI-based backend that implements a lightweight marketplace for selling books. The app allows creating and managing sellers and books, exposing a REST API for frontend integration. The project includes application configuration, Pydantic schemas, SQLAlchemy models with PostgreSQL persistence, routers, a Docker-based local development environment and pytest-powered tests for basic coverage.
 
-**Урок 2**. Провели рефакторинг. Разложили сериализаторы и ручки по отдельным пакетам.
-Подключили настоящую БД в Докере и создали модели.
+## Key features
+- REST API endpoints under `/api/v1/` for frontend integration.
+- Input validation and serialization with Pydantic schemas.
+- Persistence via SQLAlchemy ORM and PostgreSQL running in Docker.
+- `.env`-driven configuration and a `settings` module for environment variables.
+- Example HTTP requests for manual verification and pytest fixtures for DB testing.
 
-**Урок 3**. Провели рефакторинг.
+## What was done
+- Project refactored into `src/` and organized according to clean-architecture principles:
+  - separated serializers, handlers, and DB models into dedicated packages;
+  - added PostgreSQL support via Docker for development and tests;
+  - added `.env` example and a `settings` module to centralize configuration;
+  - configured pytest and database fixtures and added example tests for handlers.
+- Provided `docker-compose.yml` and Docker PostgreSQL setup to simplify local environment.
+- Included an `api_tests.http` file with sample requests to exercise endpoints manually.
 
-Поместили питонячий код в папку src (чтобы тесты запускались корректно и код был отделен от окружения).
+## Tech stack
+- Python
+- FastAPI
+- Pydantic (schemas / validation)
+- SQLAlchemy (ORM)
+- PostgreSQL (database, via Docker)
+- Docker & docker-compose (local DB)
+- pytest (testing)
+- uvicorn (ASGI server)
+- Dependencies listed in `requirements.txt`
 
-Написали по одному тесту к ручкам.
+## Repository (high-level)
+```
+.
+├─ .env.example           # environment variables example
+├─ docker-compose.yml
+├─ docker/
+│  └─ postgres/           # Docker setup for Postgres
+├─ requirements.txt
+├─ api_tests.http         # example HTTP requests for manual testing
+└─ src/                   # application code (detailed structure below)
+```
 
-Настроили pytest и фикстуры. Пример почти идеальной настройки фикстур для работы с БД.
+## Detailed `src/` structure
+The `src` package contains the full application. Below is a detailed, typical layout adapted to this repository's conventions:
 
-Добавили .env файл и модуль settings для хранения переменных окружения и их легкого использования.
+```
+src/
+├─ main.py                 # FastAPI app instance and startup hooks
+├─ pytest.ini
+├─ configurations/         # layer for storing configurations, constants, parameters and project settings
+│  ├─ database.py
+│  └─ settings.py
+├─ models/                 # ORM models (SQLAlchemy) or data classes
+│  ├─ base.py
+│  ├─ books.py
+│  └─ sellers.py
+├─ schemas/                # Pydantic schemas for request/response validation and serialization
+│  ├─ books.py
+│  └─ sellers.py
+├─ routers/                # Routers (endpoint definitions) for different API resources
+│  └─ v1/
+│     ├─ books.py
+│     └─ sellers.py
+└─ tests/                  # pytest tests and fixtures (DB fixtures included)
+   ├─ conftest.py
+   ├─ test_books.py
+   └─ test_sellers.py
+```
 
-## Структура проекта
+## How to run
+Follow these steps for a typical local development run:
 
-Для удобства и соблюдения принципов чистой архитектуры проект разделен на следующие пакеты:
+1. **Copy environment example**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` and set values (database credentials, host, port, etc.) as needed.
 
-- `configurations` — слой для хранения конфигураций, констант, параметров и настроек проекта.
+2. **Start PostgreSQL (Docker)**
+   ```bash
+   docker-compose up -d --build
+   ```
+   This starts the PostgreSQL service defined under `docker/postgres`. Wait a few seconds until the DB is ready.
 
-- `models` — слой для хранения моделей (ORM или Data Classes).
+3. **Install Python dependencies**
 
-- `routers` — слой для настроек урлов для различных эндпоинтов.
+   It is recommended to use a virtual environment:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate    # on Unix/macOS
+   pip install -r requirements.txt
+   ```
 
-- `schemas` — слой содержащий схемы pydantic, отвечает за сериализацию и валидацию.
+4. **Run the application**
 
-## Полезные ссылки (в основном на английском)
+   From repository root:
+   ```bash
+   uvicorn src.main:app --host 127.0.0.1 --port 8000 --reload
+   ```
+   The interactive API docs will be available at `http://127.0.0.1:8000/docs`.
 
-#### По Fastapi:
+5. **Run tests**
 
-1. [Официальная документация](https://fastapi.tiangolo.com/)
+   The repo includes pytest and DB fixtures. Run:
+   ```bash
+   pytest -q
+   ```
+   Tests use fixtures to provide an isolated DB instance (see `tests/conftest.py`).
 
-2. [Лучшие практики](https://github.com/zhanymkanov/fastapi-best-practices)
+6. **Shutdown services**
+   ```bash
+   docker-compose down
+   ```
 
-3. [Собрание полезных библиотек и пакетов](https://github.com/mjhea0/awesome-fastapi)
+## Example requests
+Use the included `api_tests.http` (or a tool like curl / httpie / Postman) to exercise endpoints. The `api_tests.http` file contains prepared requests for the common flows.
 
-4. [Полезная статья по структуре проекта](https://camillovisini.com/coding/abstracting-fastapi-services)
-
-#### По принципам REST архитектуры:
-
-5. [Полезные рекомендации по правильному написанию REST API](<https://github.com/stickfigure/blog/wiki/How-to-(and-how-not-to)-design-REST-APIs>)
-
-#### По SQLAlchemy:
-
-6. [Хороший бесплатный видеокурс на YouTube. На русском языке](https://youtube.com/playlist?list=PLeLN0qH0-mCXARD_K-USF2wHctxzEVp40&si=V7rZGqu1KVJvidLz)
+## Testing
+- Tests are configured with pytest and include fixtures for the database to allow reproducible integration tests.
+- Run `pytest` to execute unit/integration tests. Tests and fixtures are located under `src/tests/`.
